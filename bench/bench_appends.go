@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
 	"github.com/happypancake/hpc/events"
 )
 
@@ -20,7 +21,7 @@ func benchmarkAppends(records, goroutines, size int) {
 	wg.Add(goroutines)
 
 	data := bytes.Repeat([]byte("Z"), size)
-	events := []events.Envelope{events.New("test", data)}
+	pack := []events.Envelope{events.New("test", data)}
 
 	started := time.Now()
 
@@ -33,7 +34,7 @@ func benchmarkAppends(records, goroutines, size int) {
 				es.Append(
 					aggName,
 					events.ExpectedVersionAny,
-					events,
+					pack,
 				)
 
 			}
