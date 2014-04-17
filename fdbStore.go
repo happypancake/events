@@ -71,7 +71,8 @@ func (es *fdbStore) Append(aggregId string, expectedVersion int, records []Envel
 	_, err = es.db.Transact(func(tr fdb.Transaction) (interface{}, error) {
 		// we are getting them in parallel
 		aggregRecord := GetLastKeyFuture(tr, aggregSpace)
-		globalRecord := GetLastKeyFuture(tr.Snapshot(), globalSpace)
+
+		//globalRecord := GetLastKeyFuture(tr.Snapshot(), globalSpace)
 
 		nextAggregIndex := aggregRecord.MustGetNextIndex(0)
 
@@ -96,13 +97,13 @@ func (es *fdbStore) Append(aggregId string, expectedVersion int, records []Envel
 			}
 		}
 
-		nextGlobalIndex := globalRecord.MustGetNextIndex(0)
-
 		for i, evt := range records {
 			aggregIndex := nextAggregIndex + i
 
+			uuid := newSequentialUUID()
+
 			contract, data := evt.Payload()
-			tr.Set(globalSpace.Sub(nextGlobalIndex, contract, aggregId, aggregIndex), data)
+			tr.Set(globalSpace.Sub(uuid, contract, aggregId, aggregIndex), data)
 			tr.Set(aggregSpace.Sub(aggregIndex, contract), data)
 		}
 
