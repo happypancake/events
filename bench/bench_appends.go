@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"github.com/happypancake/go-eventstore"
+	"github.com/happypancake/hpc/events"
 )
 
 func benchmarkAppends(records, goroutines, size int) {
 
 	log.Info("Benchmark appends with %v goroutines and %v records (each)", goroutines, records)
 
-	es := eventstore.NewFdbStore(db, "bench")
+	es := events.NewFdbStore(db, "bench")
 	es.ReportMetrics()
 	defer es.Clear()
 
@@ -21,7 +20,7 @@ func benchmarkAppends(records, goroutines, size int) {
 	wg.Add(goroutines)
 
 	data := bytes.Repeat([]byte("Z"), size)
-	events := []eventstore.Envelope{eventstore.New("test", data)}
+	events := []events.Envelope{events.New("test", data)}
 
 	started := time.Now()
 
@@ -33,7 +32,7 @@ func benchmarkAppends(records, goroutines, size int) {
 			for i := 0; i < records; i++ {
 				es.Append(
 					aggName,
-					eventstore.ExpectedVersionAny,
+					events.ExpectedVersionAny,
 					events,
 				)
 
@@ -52,19 +51,19 @@ func benchmarkAppends(records, goroutines, size int) {
 }
 
 func benchmarkReadWrite(records, byteSize, pageSize int) {
-	es := eventstore.NewFdbStore(db, "bench")
+	es := events.NewFdbStore(db, "bench")
 	es.ReportMetrics()
 	defer es.Clear()
 
 	data := bytes.Repeat([]byte("Z"), byteSize)
 
-	page := make([]eventstore.Envelope, pageSize)
+	page := make([]events.Envelope, pageSize)
 	for i := 0; i < pageSize; i++ {
-		page[i] = eventstore.New("Test", data)
+		page[i] = events.New("Test", data)
 	}
 
 	for i := 0; i < (records / pageSize); i++ {
-		es.Append("test", eventstore.ExpectedVersionAny, page)
+		es.Append("test", events.ExpectedVersionAny, page)
 	}
 
 	var (

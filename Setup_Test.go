@@ -1,4 +1,4 @@
-package eventstore
+package events
 
 import "testing"
 import . "gopkg.in/check.v1"

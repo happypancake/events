@@ -1,4 +1,4 @@
-package eventstore
+package events
 
 import (
 	"github.com/FoundationDB/fdb-go/fdb"
