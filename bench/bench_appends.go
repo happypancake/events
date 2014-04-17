@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/happypancake/hpc/events"
+	"github.com/happypancake/events"
 )
 
 func benchmarkAppends(records, goroutines, size int) {
