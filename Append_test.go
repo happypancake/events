@@ -25,7 +25,7 @@ var _ = Suite(&given_empty_event_store{})
 func (s *given_empty_event_store) Test_when_we_append_one_record(c *C) {
 	// when
 	evt := []Envelope{New("Test", []byte("Hi"))}
-	err := s.store.Append("test1", ExpectedVersionAny, evt)
+	err := s.store.AppendToAggregate("test1", ExpectedVersionAny, evt)
 	c.Assert(err, IsNil)
 
 	recs := s.store.ReadAll(nil, 0).Items
@@ -51,7 +51,7 @@ func (s *given_empty_event_store) Test_when_we_append_one_record(c *C) {
 func (s *given_empty_event_store) Test_when_we_append_two_records_at_once(c *C) {
 	r1 := New("Test", []byte("One"))
 	r2 := New("Test", []byte("Two"))
-	err := s.store.Append("test1", ExpectedVersionAny, []Envelope{r1, r2})
+	err := s.store.AppendToAggregate("test1", ExpectedVersionAny, []Envelope{r1, r2})
 	c.Assert(err, IsNil)
 
 	recs := s.store.ReadAll(nil, 0).Items
@@ -86,7 +86,7 @@ func (s *given_empty_event_store) Test_when_we_append_two_records_at_once(c *C) 
 func (s *given_empty_event_store) Test_when_we_append_expecting_some_version(c *C) {
 
 	evt := New("Test", []byte("Hi"))
-	err := s.store.Append("test1", 1, []Envelope{evt})
+	err := s.store.AppendToAggregate("test1", 1, []Envelope{evt})
 
 	c.Assert(err, DeepEquals, &ErrConcurrencyViolation{
 		AggregateId:     "test1",
@@ -97,7 +97,7 @@ func (s *given_empty_event_store) Test_when_we_append_expecting_some_version(c *
 
 func (s *given_empty_event_store) Test_when_we_append_expecting_0_version(c *C) {
 	evt := New("Test", []byte("Hi"))
-	err := s.store.Append("test1", 0, []Envelope{evt})
+	err := s.store.AppendToAggregate("test1", 0, []Envelope{evt})
 
 	c.Assert(err, DeepEquals, &ErrConcurrencyViolation{
 		AggregateId:     "test1",
@@ -109,7 +109,7 @@ func (s *given_empty_event_store) Test_when_we_append_expecting_0_version(c *C) 
 func (s *given_empty_event_store) Test_when_we_append_expecting_no_aggregate(c *C) {
 	evt := New("Test", []byte("Hi"))
 
-	err := s.store.Append("test1", ExpectedVersionNone, []Envelope{evt})
+	err := s.store.AppendToAggregate("test1", ExpectedVersionNone, []Envelope{evt})
 
 	c.Assert(err, IsNil)
 }

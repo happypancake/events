@@ -17,7 +17,7 @@ func (s *given_event_store_with_2_records) SetUpTest(c *C) {
 
 	r1 := New("Test", []byte("One"))
 	r2 := New("Test", []byte("Two"))
-	s.store.Append("test", ExpectedVersionAny, []Envelope{r1, r2})
+	s.store.AppendToAggregate("test", ExpectedVersionAny, []Envelope{r1, r2})
 }
 func (s *given_event_store_with_2_records) TearDownTest(c *C) {
 	s.store.Clear()

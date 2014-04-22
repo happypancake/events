@@ -7,7 +7,8 @@ type Store interface {
 	ReadAllFromAggregate(aggregId string) []AggregateEvent
 	Clear()
 	ReportMetrics()
-	Append(aggregId string, expectedVersion int, records []Envelope) (err error)
+	AppendToAggregate(aggregId string, expectedVersion int, records []Envelope) (err error)
+	Append(records []Envelope) (err error)
 }
 
 const (

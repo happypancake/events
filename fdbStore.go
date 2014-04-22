@@ -57,7 +57,38 @@ func (es *fdbStore) Clear() {
 	})
 }
 
-func (es *fdbStore) Append(aggregId string, expectedVersion int, records []Envelope) (err error) {
+func (es *fdbStore) Append(records []Envelope) (err error) {
+	if es.reportMetrics {
+		defer fsd.TimeSince("es.append", time.Now())
+	}
+
+	globalSpace := es.space.Sub(globalPrefix)
+
+	_, err = es.db.Transact(func(tr fdb.Transaction) (interface{}, error) {
+
+		for _, evt := range records {
+
+			uuid := newSequentialUUID()
+
+			contract, data := evt.Payload()
+			tr.Set(globalSpace.Sub(uuid, contract, "", 0), data)
+		}
+
+		return nil, nil
+	})
+
+	if es.reportMetrics {
+		if nil == err {
+			fsd.Count("es.append.ok", 1)
+		} else {
+			fsd.Count("es.append.fail", 1)
+		}
+	}
+
+	return
+}
+
+func (es *fdbStore) AppendToAggregate(aggregId string, expectedVersion int, records []Envelope) (err error) {
 
 	if es.reportMetrics {
 		defer fsd.TimeSince("es.append", time.Now())
