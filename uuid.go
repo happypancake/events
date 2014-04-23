@@ -13,7 +13,7 @@ var (
 	node = uuid.NodeID()
 )
 
-func newSequentialUUID() []byte {
+func NewSequentialUUID() []byte {
 	uuid := make([]byte, 16)
 
 	nano := time.Now().UnixNano()

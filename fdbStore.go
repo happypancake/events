@@ -68,7 +68,7 @@ func (es *fdbStore) Append(records []Envelope) (err error) {
 
 		for _, evt := range records {
 
-			uuid := newSequentialUUID()
+			uuid := NewSequentialUUID()
 
 			contract, data := evt.Payload()
 			tr.Set(globalSpace.Sub(uuid, contract, "", 0), data)
@@ -131,7 +131,7 @@ func (es *fdbStore) AppendToAggregate(aggregId string, expectedVersion int, reco
 		for i, evt := range records {
 			aggregIndex := nextAggregIndex + i
 
-			uuid := newSequentialUUID()
+			uuid := NewSequentialUUID()
 
 			contract, data := evt.Payload()
 			tr.Set(globalSpace.Sub(uuid, contract, aggregId, aggregIndex), data)
