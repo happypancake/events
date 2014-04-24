@@ -52,3 +52,22 @@ func (u UUID) Node() uint32 {
 func (u UUID) Sequence() uint32 {
 	return binary.BigEndian.Uint32([]byte(u)[8:])
 }
+
+func (u UUID) After(another UUID) bool {
+	if u.Node() != another.Node() {
+		panic("Can't match UUIDs from different nodes")
+	}
+	t1 := u.Time()
+	t2 := another.Time()
+	if t1 == t2 {
+		const halfway uint32 = 0xFFFFFFFF / 2
+		// clocks match, let us compare sequences with wrap
+		s1 := u.Sequence()
+		s2 := u.Sequence()
+
+		return s1-s2 < halfway
+
+	} else {
+		return t1.After(t2)
+	}
+}
