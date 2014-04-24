@@ -13,6 +13,10 @@ var (
 	node = getNodeUint32()
 )
 
+func SetNodeId(id uint32) {
+	node = id
+}
+
 func getNodeUint32() uint32 {
 	n := uuid.NodeID()
 	return binary.BigEndian.Uint32(n)
