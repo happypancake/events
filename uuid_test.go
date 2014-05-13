@@ -2,6 +2,8 @@ package events
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -35,4 +37,16 @@ func Test_UUID_TimeCanBeExtracted(t *testing.T) {
 	if now.Add(time.Second).Before(id1.Time()) {
 		t.Error("Time in UUID should be close to local time")
 	}
+}
+
+type TestStruct struct {
+	Id []byte `json:"id"`
+}
+
+func Test1(t *testing.T) {
+	id := NewSequentialUUID()
+	d, _ := json.Marshal(&TestStruct{id})
+
+	panic(fmt.Sprintln("T", d))
+
 }

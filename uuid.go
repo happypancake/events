@@ -50,6 +50,12 @@ func (u UUID) UnixNano() int64 {
 	return int64(binary.BigEndian.Uint64([]byte(u)))
 }
 
+func NewUUIDPrefix(nsec int64) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(nsec))
+	return b
+}
+
 func (u UUID) Time() time.Time {
 	nsec := binary.BigEndian.Uint64([]byte(u))
 	return time.Unix(0, int64(nsec))
